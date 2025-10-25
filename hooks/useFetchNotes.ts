@@ -1,21 +1,22 @@
-'use client';
-import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes, PER_PAGE } from '@/lib/api';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
-interface UseNotesOptions {
+interface UseFetchNotesOptions {
   search: string;
+  tag?: string | undefined;
   page?: number;
   perPage?: number;
 }
 
 export const useFetchNotes = ({
   search,
+  tag = undefined,
   page = 1,
-  perPage = 10,
-}: UseNotesOptions) => {
+  perPage = PER_PAGE,
+}: UseFetchNotesOptions) => {
   return useQuery({
-    queryKey: ['notes', { search, page, perPage }],
-    queryFn: () => fetchNotes(search, page, perPage),
-    retry: 1,
+    queryKey: ['notes', { search, tag, page, perPage }],
+    queryFn: () => fetchNotes(search, tag, page, perPage),
+    placeholderData: keepPreviousData,
   });
 };
